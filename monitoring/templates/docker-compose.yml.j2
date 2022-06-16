@@ -3,13 +3,13 @@ version: "3.7"
 services:
 
   prometheus:
-    image: {{ prometheus_image }}
+    image: {{ prometheus_docker_image }}
     container_name: victoriametrics
     restart: always
     ports:
       - "8428:8428"
     volumes:
-      - {{ prometheus_data_dir }}:/prometheus-metrics-data
+      - {{ prometheus_docker_data_dir }}:/prometheus-metrics-data
     command:
       - '-retentionPeriod=1'
     networks:

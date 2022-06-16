@@ -1,8 +1,6 @@
 ---
 # tasks file for monitoring
 
----
-# tasks file for grafana
 #Prapare directories
 
 - name: Make grafana data directory writeable
@@ -10,7 +8,8 @@
     path: "{{ item }}"
     owner: 472
     group: 0
-    recurse: yes    
+    recurse: yes
+    state: directory    
   loop:
     - "{{ grafana_docker_data_dir }}"
     - "{{ grafana_docker_conf_dir }}"
@@ -24,6 +23,7 @@
 - name: Prepare dirs
   file:
     path: "{{ item }}"
+    state: directory
   loop:
     - "{{ loki_docker_conf_dir }}"
     - "{{ loki_docker_log_dir }}"
@@ -53,7 +53,7 @@
 
 - name: Copy docker-compose template
   template:
-    src: promtail-config.yaml.j2
+    src: promtail-config.yml.j2
     dest: "{{ promtail_docker_conf_dir }}/config.yml"
   tags:
     - install

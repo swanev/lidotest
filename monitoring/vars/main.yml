@@ -53,3 +53,6 @@ alertmanager_image: prom/alertmanager
 alertmanager_conf_dir: "{{alertmanager_docker_dir}}/conf"
 alertmanager_data_dir: "{{alertmanager_docker_dir}}/data"
 
+# prometheus
+prometheus_docker_data_dir: "{{ prometheus_docker_dir }}/prometheus/data"
+prometheus_docker_image: prom/prometheus

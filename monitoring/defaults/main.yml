@@ -48,3 +48,7 @@ node_exporter_container_name: node-exporter
 # defaults for alertmanager
 alertmanager_container_name:  alertmanager
 alertmanager_docker_dir: "{{ base_path }}/alertmanager"
+
+# prometheus
+prometheus_docker_dir: "{{ base_path }}/prometheus"
+prometheus_container_name: prometheus
