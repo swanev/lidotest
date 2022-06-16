@@ -57,9 +57,7 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+ansible-playbook --user user_name --inventory inventory_file deploy-monitoring.yml
 
     - name: Deploy monitoring
       hosts: monitoring
