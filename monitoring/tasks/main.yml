@@ -39,7 +39,46 @@
     - install
     - set_permission
 
-# Copy loki config file
+# Loki log plugin for docker
+
+## install loki plugin for docker logs
+
+- name: install loki plugin for docker logs
+  shell: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions && docker plugin ls
+  tags:
+    - install-plugin
+    - all
+    - never    
+
+## Upgrade loki plugin for docker logs
+
+- name: Upgrade loki plugin for docker log
+  shell: docker plugin disable loki --force && docker plugin upgrade loki grafana/loki-docker-driver:latest --grant-all-permissions && docker plugin enable loki
+  tags:
+    - upgrade-plugin
+    - all
+    - never      
+
+- name: Restart docker
+  systemd:
+    name: docker
+    state: restarted
+  tags:
+    - upgrade-plugin
+    - all
+    - never    
+
+## Uninstall loki plugin for docker logs
+
+- name: Uninstall loki plugin for docker logs
+  shell: docker plugin disable loki --force && docker plugin rm loki   
+  tags:
+    - uninstall-plugin
+    - never   
+
+# COPY CONFIG FILES
+
+## Copy loki config file
 
 - name: Copy loki docker-compose template
   template:
@@ -49,7 +88,7 @@
     - install
     - all 
 
-# Copy promtail config file
+## Copy promtail config file
 
 - name: Copy docker-compose template
   template:
@@ -58,8 +97,6 @@
   tags:
     - install
     - all
-
-# install grafana
 
 ## Copy docker-compose file
 - name: Copy docker-compose template
