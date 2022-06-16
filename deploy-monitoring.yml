@@ -1,0 +1,7 @@
+- name: Deploy monitoring
+  hosts: monitoring
+  become: true
+  become_method: sudo
+  gather_facts: true
+  roles:
+    - monitoring

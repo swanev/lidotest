@@ -1,0 +1,50 @@
+---
+# defaults file for monitoring
+
+# base 
+base_path: "/opt/docker/monitoring"
+base_role_path: "roles/"
+default_monitoring_network: monitoring
+
+# defaults for promtail
+promtail_docker_name: promtail
+promtail_docker_dir: "{{ base_path }}/promtail"
+promtail_docker_template_path: ""
+promtail_docker_log_driver: syslog
+promtail_docker_log_opt:
+  syslog-facility: local0
+  tag: promtail
+promtail_docker_memory_limit: 512MB
+
+# defaults for loki
+loki_docker_container_name: loki
+loki_docker_dir: "{{ base_path }}/loki"
+loki_docker_conf_dir: "{{ loki_docker_dir }}/conf"
+loki_docker_data_dir: "{{ loki_docker_dir }}/data"
+loki_docker_log_driver: loki
+loki_docker_log_opt:
+  syslog-facility: local0
+  tag: loki
+
+# defaults for grafana
+
+grafana_docker_name: grafana
+grafana_docker_dir: "{{ base_path }}/grafana"
+grafana_docker_net: monitoring
+grafana_docker_user: "grafana"
+grafana_creds: ""
+
+## grafana sqlite3 database
+
+grafana_docker_log_driver: syslog
+grafana_docker_log_opt:
+  syslog-facility: local0
+  tag: grafana
+
+# defaults for node-exporter
+node_exporter_dir: "{{ base_path }}/node-exporter"
+node_exporter_container_name: node-exporter
+
+# defaults for alertmanager
+alertmanager_container_name:  alertmanager
+alertmanager_docker_dir: "{{ base_path }}/alertmanager"

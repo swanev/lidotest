@@ -1,0 +1,18 @@
+#/bin/bash
+
+dashboards=`ls "{{grafana_docker_conf_dir}}"/provisioning/dashboards`
+
+echo "Folders created"
+echo "--------------------"
+
+for d in $dashboards;
+do
+
+curl -i -u "{{grafana_creds}}" -H "Content-Type: application/json" -X POST http://localhost:3000/api/dashboards/db -d @"{{grafana_docker_conf_dir}}"/provisioning/dashboards/$d
+
+done
+
+echo "Dashboards imported"
+
+echo "Add user"
+curl -XPOST -H "Content-Type: application/json" -d '{"name":"viewer","email":"viewer@localhost","login":"viewer","password":"viewer"}' http://"{{ grafana_creds }}"@localhost:3000/api/admin/users

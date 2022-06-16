@@ -1,0 +1,84 @@
+version: "3.7"
+
+services:
+
+  prometheus:
+    image: {{ prometheus_image }}
+    container_name: victoriametrics
+    restart: always
+    ports:
+      - "8428:8428"
+    volumes:
+      - {{ prometheus_data_dir }}:/prometheus-metrics-data
+    command:
+      - '-retentionPeriod=1'
+    networks:
+      - {{ default_monitoring_network }} 
+
+  node-exporter:
+    image: {{ node_exporter_image }}
+    container_name: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+#      - {{node_exporter_dir}}:/textcollector:ro      
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.ignored-mount-points
+      - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+#      - --collector.textfile.directory=/textcollector
+    networks:
+      - {{ default_monitoring_network }} 
+
+  grafana:
+    image: {{ grafana_docker_image }}
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - {{ grafana_docker_data_dir }}:/var/lib/grafana
+      - {{ grafana_docker_conf_dir }}:/etc/grafana
+      - {{ grafana_docker_log_dir }}:/var/log/grafana
+    user: {{ grafana_docker_user }}
+    networks:
+      - {{ default_monitoring_network }}  
+    logging:
+      driver: {{ grafana_docker_log_driver }}
+      options:
+        syslog-facility: local0
+        tag: grafana   
+
+  loki:
+    image: {{ loki_docker_image }}
+    container_name: {{ loki_docker_container_name }}
+    ports:
+      - {{ loki_docker_ports }}
+    volumes:
+      - "{{ loki_docker_conf_dir }}:/etc/loki"
+      - "{{ loki_docker_log_dir }}:/var/log"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - {{ default_monitoring_network }}
+
+  promtail:
+    image: {{ promtail_docker_image }}
+    container_name: {{ promtail_docker_name }}
+    restart: always
+    ports:
+      - {{ promtail_docker_ports }}
+    volumes:
+      - {{ promtail_docker_log_dir }}:/var/lib/docker/containers
+      - {{ promtail_docker_conf_dir }}:/etc/promtail/
+    command: -config.file=/etc/promtail/config.yml  
+    networks:
+      - {{ default_monitoring_network }}      
+
+networks:
+  {{ default_monitoring_network }}:
+    driver: bridge

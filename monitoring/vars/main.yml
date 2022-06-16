@@ -1,0 +1,55 @@
+---
+# vars file for monitoring
+
+# loki
+loki_docker_image: grafana/loki:2.5.0
+loki_docker_ports: "3100:3100"
+loki_listen_port: "3100"
+loki_grpc_port: "9096"
+alertmanager_url: http://{{ ansible_default_ipv4.address }}:9093
+loki_docker_net: monitoring
+loki_docker_log_dir: /var/log
+loki_docker_directory_volumes:
+  - "{{ loki_docker_conf_dir }}:/etc/loki"
+  - "{{ loki_docker_log_dir }}:/var/log"
+loki_docker_volumes: "{{ loki_docker_directory_volumes }}"
+# loki_docker_memory_limit: 512MB
+
+# promtail
+promtail_docker_image: grafana/promtail:2.5.0
+promtail_docker_ports: "9081:9081"
+promtail_docker_net: monitoring
+promtail_listen_port: 9081
+promtail_docker_data_dir: "{{ promtail_docker_dir }}/data"
+promtail_docker_conf_dir: "{{ promtail_docker_dir }}/conf"
+promtail_docker_log_dir: "/var/lib/docker/containers"
+loki_url: http://{{ ansible_default_ipv4.address }}:3100/loki/api/v1/push
+#promtail_docker_directory_volumes:
+#  - "{{ promtail_docker_conf_dir }}:/etc/promtail"
+#  - "{{ promtail_docker_log_dir }}:/var/lib/docker/containers"
+#promtail_docker_volumes: "{{ promtail_docker_directory_volumes + promtail_docker_file_volumes}}"
+#promtail_docker_file_volumes: []
+
+# grafana
+grafana_docker_image: grafana/grafana:8.5.4
+grafana_docker_conf_dir: "{{ grafana_docker_dir }}/conf"
+grafana_docker_log_dir: "{{ grafana_docker_dir }}/log"
+grafana_docker_ports: "3000:3000"
+grafana_docker_data_dir: "{{ grafana_docker_dir }}/data"
+grafana_docker_directory_volumes:
+  - "{{ grafana_docker_data_dir }}:/var/lib/grafana"
+#  - "{{ grafana_docker_conf_dir }}:/etc/grafana"
+  - "{{ grafana_docker_log_dir }}:/var/log/grafana"
+#grafana_docker_file_volumes: []
+#grafana_docker_volumes: "{{ grafana_docker_directory_volumes + grafana_docker_file_volumes}}"
+#grafana_docker_memory_limit: 512MB
+
+# node-exporter
+node_exporter_image: prom/node-exporter
+node_exporter_file_dir: "{{base_role_path}}/files/node-exporter"
+
+# alertmanager
+alertmanager_image: prom/alertmanager
+alertmanager_conf_dir: "{{alertmanager_docker_dir}}/conf"
+alertmanager_data_dir: "{{alertmanager_docker_dir}}/data"
+

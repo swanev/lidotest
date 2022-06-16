@@ -1,0 +1,95 @@
+---
+# tasks file for monitoring
+
+---
+# tasks file for grafana
+#Prapare directories
+
+- name: Make grafana data directory writeable
+  file:
+    path: "{{ item }}"
+    owner: 472
+    group: 0
+    recurse: yes    
+  loop:
+    - "{{ grafana_docker_data_dir }}"
+    - "{{ grafana_docker_conf_dir }}"
+    - "{{ grafana_docker_log_dir }}"
+    - "{{ grafana_docker_dir }}"
+    - "{{ grafana_docker_conf_dir }}/provisioning/datasources"    
+  tags:
+    - install
+    - set_permission      
+
+- name: Prepare dirs
+  file:
+    path: "{{ item }}"
+  loop:
+    - "{{ loki_docker_conf_dir }}"
+    - "{{ loki_docker_log_dir }}"
+    - "{{ loki_docker_dir }}"
+    - "{{ promtail_docker_conf_dir }}"
+    - "{{ promtail_docker_dir }}"
+    - "{{ node_exporter_dir }}"
+    - "{{ node_exporter_file_dir }}"
+    - "{{ alertmanager_docker_dir }}"
+    - "{{ alertmanager_conf_dir }}"
+    - "{{ alertmanager_data_dir }}"      
+  tags:
+    - install
+    - set_permission
+
+# Copy loki config file
+
+- name: Copy loki docker-compose template
+  template:
+    src: loki-config.yml.j2
+    dest: "{{ loki_docker_conf_dir }}/local-config.yaml"
+  tags:
+    - install
+    - all 
+
+# Copy promtail config file
+
+- name: Copy docker-compose template
+  template:
+    src: promtail-config.yaml.j2
+    dest: "{{ promtail_docker_conf_dir }}/config.yml"
+  tags:
+    - install
+    - all
+
+# install grafana
+
+## Copy docker-compose file
+- name: Copy docker-compose template
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ grafana_docker_dir }}/docker-compose.yml"
+
+## Copy grafana.ini file
+- name: Copy docker-compose template
+  template:
+    src: grafana.ini
+    dest: "{{ grafana_docker_conf_dir }}/grafana.ini"
+
+## Copy datasources
+
+- name: Copy grafana datasources
+  template:
+    src: datasource.yml.j2
+    dest: "{{ grafana_docker_conf_dir }}/provisioning/datasources/datasource.yml"  
+
+## Stop existing grafana docker-compose file
+
+- name: Stop existing {{ docker_grafana_name }} container
+  shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" down -t 15
+  tags:
+    - remove
+    - upgrade
+
+- name: Run docker grafana container
+  shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" up -d
+  tags:
+    - install
+    - upgrade
