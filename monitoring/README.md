@@ -1,22 +1,56 @@
-Role Name
+Monitoring
 =========
 
-A brief description of the role goes here.
+Deploy Grafana/Prometheus/AlertManager/Loki/node-exporter/cadvisor
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Linux, Docker/Podman
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+# loki
+loki_docker_image
+loki_docker_ports
+loki_listen_port
+loki_grpc_port
+alertmanager_url
+loki_docker_net
+loki_docker_log_dir
+
+# promtail
+promtail_docker_image
+promtail_docker_ports
+promtail_docker_net
+promtail_listen_port
+promtail_docker_data_dir
+promtail_docker_conf_dir
+promtail_docker_log_dir
+loki_url:
+
+# grafana
+grafana_docker_image: grafana/grafana:8.5.4
+grafana_docker_conf_dir: "{{ grafana_docker_dir }}/conf"
+grafana_docker_log_dir: "{{ grafana_docker_dir }}/log"
+grafana_docker_ports: "3000:3000"
+grafana_docker_data_dir: "{{ grafana_docker_dir }}/data"
+
+# node-exporter
+node_exporter_image: prom/node-exporter
+node_exporter_file_dir: "{{base_role_path}}/files/node-exporter"
+
+# alertmanager
+alertmanager_image: prom/alertmanager
+alertmanager_conf_dir: "{{alertmanager_docker_dir}}/conf"
+alertmanager_data_dir: "{{alertmanager_docker_dir}}/data"
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+ 
 
 Example Playbook
 ----------------
@@ -27,12 +61,10 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: username.rolename, x: 42 }
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+    - name: Deploy monitoring
+      hosts: monitoring
+      become: true
+      become_method: sudo
+      gather_facts: true
+      roles:
+         - monitoring         
