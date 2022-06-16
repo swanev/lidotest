@@ -50,8 +50,8 @@ node_exporter_file_dir: "{{base_role_path}}/files/node-exporter"
 
 # alertmanager
 alertmanager_image: prom/alertmanager
-alertmanager_conf_dir: "{{alertmanager_docker_dir}}/conf"
-alertmanager_data_dir: "{{alertmanager_docker_dir}}/data"
+alertmanager_docker_conf_dir: "{{alertmanager_docker_dir}}/conf"
+alertmanager_docker_data_dir: "{{alertmanager_docker_dir}}/data"
 
 # prometheus
 prometheus_docker_data_dir: "{{ prometheus_docker_dir }}/prometheus/data"

@@ -5,9 +5,10 @@
 base_path: "/opt/docker/monitoring"
 base_role_path: "roles/"
 default_monitoring_network: monitoring
+file_dir: monitoring/files
 
 # defaults for promtail
-promtail_docker_name: promtail
+promtail_container_name: promtail
 promtail_docker_dir: "{{ base_path }}/promtail"
 promtail_docker_template_path: ""
 promtail_docker_log_driver: syslog
@@ -17,7 +18,7 @@ promtail_docker_log_opt:
 promtail_docker_memory_limit: 512MB
 
 # defaults for loki
-loki_docker_container_name: loki
+loki_container_name: loki
 loki_docker_dir: "{{ base_path }}/loki"
 loki_docker_conf_dir: "{{ loki_docker_dir }}/conf"
 loki_docker_data_dir: "{{ loki_docker_dir }}/data"
@@ -28,7 +29,7 @@ loki_docker_log_opt:
 
 # defaults for grafana
 
-grafana_docker_name: grafana
+grafana_container_name: grafana
 grafana_docker_dir: "{{ base_path }}/grafana"
 grafana_docker_net: monitoring
 grafana_docker_user: "grafana"

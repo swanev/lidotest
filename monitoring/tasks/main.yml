@@ -33,8 +33,8 @@
     - "{{ node_exporter_dir }}"
     - "{{ node_exporter_file_dir }}"
     - "{{ alertmanager_docker_dir }}"
-    - "{{ alertmanager_conf_dir }}"
-    - "{{ alertmanager_data_dir }}"      
+    - "{{ alertmanager_docker_conf_dir }}"
+    - "{{ alertmanager_docker_data_dir }}"      
   tags:
     - install
     - set_permission
@@ -46,41 +46,47 @@
 - name: install loki plugin for docker logs
   shell: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions && docker plugin ls
   tags:
-    - install-plugin
-    - all
-    - never    
+    - never
+    - install-loki-plugin 
 
 ## Upgrade loki plugin for docker logs
 
 - name: Upgrade loki plugin for docker log
   shell: docker plugin disable loki --force && docker plugin upgrade loki grafana/loki-docker-driver:latest --grant-all-permissions && docker plugin enable loki
   tags:
-    - upgrade-plugin
-    - all
-    - never      
+    - never
+    - upgrade-loki-plugin     
 
 - name: Restart docker
   systemd:
     name: docker
     state: restarted
   tags:
-    - upgrade-plugin
-    - all
-    - never    
+    - never
+    - uninstall-loki-plugin    
 
 ## Uninstall loki plugin for docker logs
 
 - name: Uninstall loki plugin for docker logs
   shell: docker plugin disable loki --force && docker plugin rm loki   
   tags:
-    - uninstall-plugin
     - never   
 
 # COPY CONFIG FILES
 
 ## Copy loki config file
 
-- name: Copy loki docker-compose template
+- name: Copy alertmanager config template
+  copy:
+    src: "{{ file_dir }}/alertmanager.yml"
+    dest: "{{ alertmanager_docker_conf_dir }}/alertmanager.yml"    
+  tags:
+    - install
+    - all 
+
+## Copy loki config file
+
+- name: Copy loki config template
   template:
     src: loki-config.yml.j2
     dest: "{{ loki_docker_conf_dir }}/local-config.yaml"
@@ -90,7 +96,7 @@
 
 ## Copy promtail config file
 
-- name: Copy docker-compose template
+- name: Copy promtail config template
   template:
     src: promtail-config.yml.j2
     dest: "{{ promtail_docker_conf_dir }}/config.yml"
@@ -105,7 +111,7 @@
     dest: "{{ grafana_docker_dir }}/docker-compose.yml"
 
 ## Copy grafana.ini file
-- name: Copy docker-compose template
+- name: Copy grafafna.ini template
   template:
     src: grafana.ini
     dest: "{{ grafana_docker_conf_dir }}/grafana.ini"
@@ -119,13 +125,13 @@
 
 ## Stop existing grafana docker-compose file
 
-- name: Stop existing {{ docker_grafana_name }} container
+- name: Stop monitoring
   shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" down -t 15
   tags:
     - remove
     - upgrade
 
-- name: Run docker grafana container
+- name: Revive monitoring
   shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" up -d
   tags:
     - install
