@@ -28,23 +28,23 @@ promtail_listen_port
 promtail_docker_data_dir
 promtail_docker_conf_dir
 promtail_docker_log_dir
-loki_url:
+loki_url
 
 # grafana
-grafana_docker_image: grafana/grafana:8.5.4
-grafana_docker_conf_dir: "{{ grafana_docker_dir }}/conf"
-grafana_docker_log_dir: "{{ grafana_docker_dir }}/log"
-grafana_docker_ports: "3000:3000"
-grafana_docker_data_dir: "{{ grafana_docker_dir }}/data"
+grafana_docker_image
+grafana_docker_conf_dir
+grafana_docker_log_dir
+grafana_docker_ports
+grafana_docker_data_dir
 
 # node-exporter
-node_exporter_image: prom/node-exporter
-node_exporter_file_dir: "{{base_role_path}}/files/node-exporter"
+node_exporter_image
+node_exporter_file_dir
 
 # alertmanager
-alertmanager_image: prom/alertmanager
-alertmanager_conf_dir: "{{alertmanager_docker_dir}}/conf"
-alertmanager_data_dir: "{{alertmanager_docker_dir}}/data"
+alertmanager_image
+alertmanager_conf_dir
+alertmanager_data_dir
 
 
 Dependencies
