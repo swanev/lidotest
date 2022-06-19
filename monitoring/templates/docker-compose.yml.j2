@@ -15,6 +15,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - {{ default_monitoring_network }}
+    logging:
+      driver: {{ log_driver }}
+      options:
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"            
 
 
   node-exporter:
