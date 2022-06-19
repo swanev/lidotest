@@ -1,16 +1,17 @@
-Monitoring
+Monitoring:
 =========
 
 Deploy Grafana/Prometheus/AlertManager/Loki/node-exporter/cadvisor/Promtail with Prometheus docker_sd_config for Docker service descovery.
 
-Requirements
+Requirements:
 ------------
 
 Linux, Docker/Podman
 
-Role Variables
+Role Variables:
 --------------
 
+# common
 log_driver
 
 # loki
@@ -60,31 +61,43 @@ Dependencies
 ------------
 
 
-Role tags
+Role tags:
 --------------
 
-never - For tasks which has to be done only once at first time installation procedure and shouldn't been launched by default.
-install - For first time installation procedure.
-install-loki-plugin - Run installation of Loki plugin for Docker. Included in "install" and "never" tags. 
-enable-loki-plugin - Enabled Loki plugin for Docker. Included to "install" and "never" tags. 
-disable-loki-plugin - Disable Loki plugin for Docker. Included to "never" tags.
-uninstall-loki-plugin - Uninstall Loki plugin for DOcker. Included to "never" tags.
-docker-daemon - Run task to reconfigure Docker daemon to grant access for Prometheus service descovery. Included in "install" and "never" tags. 
-prepare_dirs - Create dirs for which will be mounted to containers. Included in "install" tag.
-upgrade - Run task when you need to upgrade configs and relaunch containers. Included in "install" tag.
-start - Just run docker-compose up -d. Included in "install" tag.
-remove - Just run docker-compose down
+**never** - For tasks which has to be done only once at first time installation procedure and shouldn't been launched by default.
 
-Example Playbook
+**install** - For first time installation procedure.
+
+**install-loki-plugin** - Run installation of Loki plugin for Docker. Included in "install" and "never" tags. 
+
+**enable-loki-plugin** - Enabled Loki plugin for Docker. Included to "install" and "never" tags. 
+
+**disable-loki-plugin** - Disable Loki plugin for Docker. Included to "never" tags.
+
+**uninstall-loki-plugin** - Uninstall Loki plugin for DOcker. Included to "never" tags.
+
+**docker-daemon **- Run task to reconfigure Docker daemon to grant access for Prometheus.
+
+**service descovery**. Included in "install" and "never" tags. 
+
+**prepare_dirs** - Create dirs for which will be mounted to containers. Included in "install" tag.
+
+**upgrade** - Run task when you need to upgrade configs and relaunch containers. Included in "install" tag.
+
+**start** - Just run docker-compose up -d. Included in "install" tag.
+
+**remove** - Just run docker-compose down
+
+Example Playbook:
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-For first time installation run:
+***For first time installation run:***
 
 ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags install
 
-For down and up containers 
+***For down and up containers:***
 
 ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags remove,start
 
