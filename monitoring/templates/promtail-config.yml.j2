@@ -23,7 +23,7 @@ scrape_configs:
      - localhost
     labels:
       job: backendlog
-      __path__: /var/lib/docker/containers*
+      __path__: /var/lib/docker/containers/*
 
   pipeline_stages:
    - docker: {}

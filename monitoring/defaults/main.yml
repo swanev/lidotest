@@ -6,6 +6,11 @@ base_path: "/opt/docker/monitoring"
 base_role_path: "roles/"
 default_monitoring_network: monitoring
 file_dir: monitoring/files
+log_driver: loki
+
+docker_daemon_ip: 0.0.0.0
+docker_daemon_port: 2375
+docker_daemon_service_dir: /etc/systemd/system/docker.service.d
 
 # defaults for promtail
 promtail_container_name: promtail
@@ -25,7 +30,7 @@ loki_docker_data_dir: "{{ loki_docker_dir }}/data"
 loki_docker_log_driver: loki
 loki_docker_log_opt:
   syslog-facility: local0
-  tag: loki
+  tags: loki
 
 # defaults for grafana
 
@@ -53,3 +58,6 @@ alertmanager_docker_dir: "{{ base_path }}/alertmanager"
 # prometheus
 prometheus_docker_dir: "{{ base_path }}/prometheus"
 prometheus_container_name: prometheus
+
+# cadvisor
+cadvisor_container_name: cadvisor

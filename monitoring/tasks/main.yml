@@ -34,10 +34,41 @@
     - "{{ node_exporter_file_dir }}"
     - "{{ alertmanager_docker_dir }}"
     - "{{ alertmanager_docker_conf_dir }}"
-    - "{{ alertmanager_docker_data_dir }}"      
+    - "{{ alertmanager_docker_data_dir }}"
+    - "{{ prometheus_docker_data_dir }}"    
   tags:
     - install
     - set_permission
+
+# Prepare docker daemon dir
+
+- name: Prepare docker daemon dir
+  file:
+    path: "{{ docker_daemon_service_dir }}"
+    state: directory
+  tags:
+    - never  
+    - install
+    - docker-daemon
+
+- name: Copy docker daemon options
+  template:
+    src: options.conf.j2
+    dest: "{{ docker_daemon_service_dir }}/options.conf"
+  tags:
+    - never   
+    - install
+    - docker-daemon
+
+- name: Restart docker daemon
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  tags:
+    - never   
+    - install
+    - docker-daemon
 
 # Loki log plugin for docker
 
@@ -45,14 +76,27 @@
 
 - name: install loki plugin for docker logs
   shell: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions && docker plugin ls
+  ignore_errors: true
   tags:
     - never
-    - install-loki-plugin 
+    - install    
+    - install-loki-plugin
+
+## Enable loki plugin for docker logs
+
+- name: install loki plugin for docker logs
+  shell: docker plugin enable loki
+  ignore_errors: true
+  tags:
+    - never
+    - install    
+    - enable-loki-plugin     
 
 ## Upgrade loki plugin for docker logs
 
 - name: Upgrade loki plugin for docker log
   shell: docker plugin disable loki --force && docker plugin upgrade loki grafana/loki-docker-driver:latest --grant-all-permissions && docker plugin enable loki
+  ignore_errors: true
   tags:
     - never
     - upgrade-loki-plugin     
@@ -61,28 +105,35 @@
   systemd:
     name: docker
     state: restarted
+  ignore_errors: true    
   tags:
     - never
-    - uninstall-loki-plugin    
+    - install    
+    - install-loki-plugin
+    - enable-loki-plugin         
+    - uninstall-loki-plugin       
 
 ## Uninstall loki plugin for docker logs
 
 - name: Uninstall loki plugin for docker logs
-  shell: docker plugin disable loki --force && docker plugin rm loki   
+  shell: docker plugin disable loki --force && docker plugin rm loki
+  ignore_errors: true   
   tags:
-    - never   
+    - never 
+    - uninstall-loki-plugin 
 
 # COPY CONFIG FILES
 
-## Copy loki config file
+## Copy alertmanager config file
 
 - name: Copy alertmanager config template
   copy:
     src: "{{ file_dir }}/alertmanager.yml"
     dest: "{{ alertmanager_docker_conf_dir }}/alertmanager.yml"    
   tags:
+    - start
     - install
-    - all 
+    - upgrade
 
 ## Copy loki config file
 
@@ -91,8 +142,20 @@
     src: loki-config.yml.j2
     dest: "{{ loki_docker_conf_dir }}/local-config.yaml"
   tags:
+    - start
     - install
-    - all 
+    - upgrade
+
+## Copy prometheus config file
+
+- name: Copy loki config template
+  template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_docker_data_dir }}/prometheus.yml"
+  tags:
+    - start
+    - install
+    - upgrade
 
 ## Copy promtail config file
 
@@ -101,38 +164,55 @@
     src: promtail-config.yml.j2
     dest: "{{ promtail_docker_conf_dir }}/config.yml"
   tags:
+    - start
     - install
-    - all
+    - upgrade
 
 ## Copy docker-compose file
 - name: Copy docker-compose template
   template:
     src: docker-compose.yml.j2
-    dest: "{{ grafana_docker_dir }}/docker-compose.yml"
+    dest: "{{ base_path }}/docker-compose.yml"
+  tags:
+    - start
+    - install
+    - upgrade    
 
 ## Copy grafana.ini file
 - name: Copy grafafna.ini template
   template:
     src: grafana.ini
     dest: "{{ grafana_docker_conf_dir }}/grafana.ini"
+  tags:
+    - start
+    - install
+    - upgrade    
 
 ## Copy datasources
 
 - name: Copy grafana datasources
   template:
     src: datasource.yml.j2
-    dest: "{{ grafana_docker_conf_dir }}/provisioning/datasources/datasource.yml"  
+    dest: "{{ grafana_docker_conf_dir }}/provisioning/datasources/datasource.yml" 
+  tags:
+    - start
+    - install
+    - upgrade     
 
-## Stop existing grafana docker-compose file
+## Stop existing monitoring docker-compose file
 
 - name: Stop monitoring
-  shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" down -t 15
+  shell: docker-compose -f "{{ base_path }}/docker-compose.yml" down
   tags:
+    - start  
     - remove
     - upgrade
 
+## Start monitoring docker-compose file
+
 - name: Revive monitoring
-  shell: docker-compose -f "{{ grafana_docker_dir }}/docker-compose.yml" up -d
+  shell: docker-compose -f "{{ base_path }}/docker-compose.yml" up -d
   tags:
+    - start
     - install
     - upgrade

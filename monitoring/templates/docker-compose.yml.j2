@@ -5,20 +5,28 @@ services:
   prometheus:
     image: {{ prometheus_docker_image }}
     container_name: {{ prometheus_container_name }}
+    depends_on:
+      - loki
     restart: always
     ports:
-      - "8428:8428"
+      - {{ prometheus_docker_ports }}
     volumes:
-      - {{ prometheus_docker_data_dir }}:/prometheus-metrics-data
+      - {{ prometheus_docker_data_dir }}:/etc/prometheus:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - {{ default_monitoring_network }} 
+      - {{ default_monitoring_network }}
+
 
   node-exporter:
     image: {{ node_exporter_image }}
     container_name: {{ node_exporter_container_name }}
+    depends_on:
+      - loki    
     restart: always
+    labels:
+        - "prometheus-job=node-exporter"    
     ports:
-      - "9100:9100"
+      - {{ node_exporter_docker_ports }}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -32,13 +40,21 @@ services:
 #      - --collector.textfile.directory=/textcollector
     networks:
       - {{ default_monitoring_network }} 
+    logging:
+      driver: {{ log_driver }}
+      options:
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"
 
   grafana:
     image: {{ grafana_docker_image }}
     container_name: {{ grafana_container_name }}
+    depends_on:
+      - loki    
     restart: always
+    labels:
+        - "prometheus-job=grafana"      
     ports:
-      - "3000:3000"
+      - {{ grafana_docker_ports }}
     volumes:
       - {{ grafana_docker_data_dir }}:/var/lib/grafana
       - {{ grafana_docker_conf_dir }}:/etc/grafana
@@ -47,28 +63,34 @@ services:
     networks:
       - {{ default_monitoring_network }}  
     logging:
-      driver: {{ grafana_docker_log_driver }}
+      driver: {{ log_driver }} 
       options:
-        syslog-facility: local0
-        tag: grafana   
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"      
 
   loki:
     image: {{ loki_docker_image }}
     container_name: {{ loki_container_name }}
-    restart: always    
+    restart: always
+    labels:
+        - "prometheus-job=loki"             
     ports:
       - {{ loki_docker_ports }}
     volumes:
       - "{{ loki_docker_conf_dir }}:/etc/loki"
       - "{{ loki_docker_log_dir }}:/var/log"
+      - /var/run/loki.sock:/var/run/loki.sock
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - {{ default_monitoring_network }}
+      - {{ default_monitoring_network }}         
 
   promtail:
     image: {{ promtail_docker_image }}
     container_name: {{ promtail_container_name }}
+    depends_on:
+      - loki    
     restart: always
+    labels:
+        - "prometheus-job=promtail"        
     ports:
       - {{ promtail_docker_ports }}
     volumes:
@@ -76,19 +98,54 @@ services:
       - {{ promtail_docker_conf_dir }}:/etc/promtail/
     command: -config.file=/etc/promtail/config.yml  
     networks:
-      - {{ default_monitoring_network }}      
+      - {{ default_monitoring_network }}
+    logging:
+      driver: {{ log_driver }}
+      options:
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"             
 
   alertmanager:
     image: {{ alertmanager_image }}
     container_name: {{ alertmanager_container_name }}
+    depends_on:
+      - loki    
     restart: always
+    labels:
+        - "prometheus-job=alertmanager"     
     volumes:
       - {{ alertmanager_docker_conf_dir }}:/etc/alertmanager
       - {{ alertmanager_docker_data_dir }}:/alertmanager
     ports:
-      - "9093:9093"
+      - {{ alertmanager_docker_ports }}
     networks:
-      - monitoring
+      - {{ default_monitoring_network }}
+    logging:
+      driver: {{ log_driver }}
+      options:
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"      
+
+  cadvisor:
+    image: {{ cadvisor_docker_image }}
+    container_name: {{ cadvisor_container_name }}
+    depends_on:
+      - loki    
+    restart: always
+    labels:
+        - "prometheus-job=cadvisor"       
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    ports:
+      - {{ cadvisor_docker_ports }}
+    networks:
+      - {{ default_monitoring_network }}
+    logging:
+      driver: {{ log_driver }}
+      options:
+        loki-url: "https://{{ loki_container_name }}:{{ loki_listen_port }}/api/v1/push"      
 
 networks:
   {{ default_monitoring_network }}:
