@@ -1,6 +1,6 @@
 #/bin/bash
 
-dashboards=`ls "{{grafana_docker_conf_dir}}"/provisioning/dashboards`
+dashboards=`ls "{{ grafana_docker_conf_dir }}"/provisioning/dashboards`
 
 echo "Folders created"
 echo "--------------------"
@@ -8,7 +8,7 @@ echo "--------------------"
 for d in $dashboards;
 do
 
-curl -i -u "{{grafana_creds}}" -H "Content-Type: application/json" -X POST http://localhost:3000/api/dashboards/db -d @"{{grafana_docker_conf_dir}}"/provisioning/dashboards/$d
+curl -i -u "{{ grafana_creds }}" -H "Content-Type: application/json" -X POST http://localhost:3000/api/dashboards/db -d @"{{ grafana_docker_conf_dir }}"/provisioning/dashboards/$d
 
 done
 

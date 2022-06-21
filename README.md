@@ -76,7 +76,7 @@ Role tags:
 
 **uninstall-loki-plugin** - Uninstall Loki plugin for DOcker. Included to "never" tags.
 
-**docker-daemon **- Run task to reconfigure Docker daemon to grant access for Prometheus.
+**docker-daemon** - Run task to reconfigure Docker daemon to grant access for Prometheus.
 
 **service descovery**. Included in "install" and "never" tags. 
 
