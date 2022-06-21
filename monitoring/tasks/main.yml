@@ -219,11 +219,15 @@
 
 - name: Copy grafana dashboards
   ansible.builtin.copy:
-    src: "{{ file_dir }}/alertmanager.yml"
-    dest: "{{ alertmanager_docker_conf_dir }}/alertmanager.yml"
+    src: "{{ file_dir }}/dashboards/{{ item }}"
+    dest: "{{ grafana_docker_conf_dir }}/provisioning/dashboards"    
     owner: 472
     group: 0
     mode: 0644        
+  loop:
+    - Alertmanager.json
+    - Docker_monitoring.json
+    - Node_Exporter_Full.json     
   tags:
     - install
     - upgrade      
