@@ -1,13 +1,15 @@
 TESTS:
 =========
 
-Usage
+Usage:
 ----------------
 
-Check Docker daemon access with TCP and containers status:
+*** Check Docker daemon access with TCP and containers status: ***
+
 python3 docker_check.py FQDN_OR_IP_ADDRES_OF_DOCKER_NODE PORT
 
-Check services accessability:
+*** Check services accessability: ***
+
 python3 services_check.py FQDN_OR_IP_ADDRES_OF_DOCKER_NODE PORT1 PORT2 PORT3 ...
 
 Example:
