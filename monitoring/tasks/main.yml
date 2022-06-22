@@ -16,7 +16,7 @@
     - "{{ grafana_docker_conf_dir }}"
     - "{{ grafana_docker_log_dir }}"
     - "{{ grafana_docker_dir }}"
-    - "{{ grafana_docker_conf_dir }}/provisioning/datasources"    
+    - "{{ grafana_docker_dashboards_dir }}"    
   tags:
     - install
     - prepare_dirs      
@@ -220,7 +220,7 @@
 - name: Copy grafana dashboards
   ansible.builtin.copy:
     src: "{{ file_dir }}/dashboards/{{ item }}"
-    dest: "{{ grafana_docker_conf_dir }}/provisioning/dashboards"    
+    dest: "{{ grafana_docker_dashboards_dir }}"
     owner: 472
     group: 0
     mode: 0644        
@@ -231,6 +231,20 @@
   tags:
     - install
     - upgrade      
+
+- name: Copy upload scpipt
+  ansible.builtin.template:
+    src: grafana_dashbords_import.sh.j2
+    dest: "{{ grafana_docker_dir }}/grafana_dashbords_import.sh"
+  tags:
+    - install
+    - upgrade       
+
+- name: Upload dashboards
+  ansible.builtin.shell: /bin/bash {{ grafana_docker_dir }}/grafana_dashbords_import.sh
+  tags:
+    - install
+    - upgrade       
 
 ## Stop existing monitoring docker-compose file
 

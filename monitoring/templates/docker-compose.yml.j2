@@ -62,6 +62,7 @@ services:
       - {{ grafana_docker_data_dir }}:/var/lib/grafana
       - {{ grafana_docker_conf_dir }}:/etc/grafana
       - {{ grafana_docker_log_dir }}:/var/log/grafana
+      - {{ grafana_docker_dashboards_dir }}:/etc/grafana/provisioning/dashboards
     user: {{ grafana_docker_user }}
     networks:
       - {{ default_monitoring_network }}  

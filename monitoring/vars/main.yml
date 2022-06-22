@@ -34,8 +34,10 @@ loki_url: http://{{ ansible_default_ipv4.address }}:3100/loki/api/v1/push
 grafana_docker_image: grafana/grafana:8.5.4
 grafana_docker_conf_dir: "{{ grafana_docker_dir }}/conf"
 grafana_docker_log_dir: "{{ grafana_docker_dir }}/log"
+grafana_docker_dashboards_dir: "{{ grafana_docker_dir }}/dashboards"
 grafana_docker_ports: "3000:3000"
 grafana_docker_data_dir: "{{ grafana_docker_dir }}/data"
+grafana_creds: admin:admin
 grafana_docker_directory_volumes:
   - "{{ grafana_docker_data_dir }}:/var/lib/grafana"
 #  - "{{ grafana_docker_conf_dir }}:/etc/grafana"
