@@ -10,49 +10,49 @@
       that: true
   - name: check that docker accessavle with TCP
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 2375
     delegate_to: localhost      
     
   - name: check that NODE-EXPORTER is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 9100
     delegate_to: localhost
 
   - name: check that GRAFANA is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 3000
     delegate_to: localhost        
 
   - name: check that CADVISOR is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 9092
     delegate_to: localhost    
 
   - name: check that PROMTAIL is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 9081
     delegate_to: localhost
     
   - name: check that ALERTMANAGER is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 9093
     delegate_to: localhost
     
   - name: check that PROMETHEUS is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 9090
     delegate_to: localhost
     
   - name: check that LOKI is ready
     ansible.builtin.wait_for:
-      host: 192.168.122.201
+      host: "{{ invenory_hostname }}"
       port: 3100
     delegate_to: localhost
     
