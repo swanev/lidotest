@@ -60,7 +60,8 @@ services:
       - {{ grafana_docker_ports }}
     volumes:
       - {{ grafana_docker_data_dir }}:/var/lib/grafana
-      - {{ grafana_docker_conf_dir }}:/etc/grafana
+      - {{ grafana_docker_conf_dir }}/grafana.ini:/etc/grafana/grafana.ini
+      - {{ grafana_docker_conf_dir }}/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - {{ grafana_docker_log_dir }}:/var/log/grafana
       - {{ grafana_docker_dashboards_dir }}:/etc/grafana/provisioning/dashboards
     user: {{ grafana_docker_user }}
