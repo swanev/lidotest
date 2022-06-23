@@ -1,6 +1,7 @@
 import docker
 import sys
 from colorama import Fore, Style
+PORT_DEFAULT_PORT="2375"
 IP_PORT="tcp://"+sys.argv[1]+":"+sys.argv[2]
 DOCKER_CLIENT = docker.DockerClient(base_url=IP_PORT)
 RUNNING = 'running'

@@ -12,7 +12,8 @@ provisioner:
 verifier:
   name: ansible
 lint: |
-  set -e 
+  set -e
+  yamllint .
   ansible-lint
 skip_list:
   - 'role_name'
