@@ -1,0 +1,198 @@
+groups:
+- name: node
+  rules:
+  - alert: High CPU load %
+    expr: '100 - (avg by(instance ) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95'
+    for: 45s
+    labels:
+      description: CPU load is > 95%
+      weight: 0.2
+      severity: critical
+      severity_code: 90
+
+  - alert: High CPU load %
+    expr: '100 - (avg by(instance ) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85'
+    for: 45s
+    labels:
+      description: CPU load is > 85%
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: High CPU IO wait %
+    expr: '(avg by(instance ) (irate(node_cpu_seconds_total{mode="iowait"}[5m])) * 100) > 40'
+    for: 45s
+    labels:
+      description: CPU IO wait is > 40%
+      weight: 0.3
+      severity: critical
+      severity_code: 90
+
+  - alert: High CPU IO wait %
+    expr: '(avg by(instance ) (irate(node_cpu_seconds_total{mode="iowait"}[5m])) * 100) > 30'
+    for: 45s
+    labels:
+      description: CPU IO wait is > 30%
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: High CPU Context switching
+    expr: '(sum(rate(node_context_switches_total[3m])) by (instance ) / count(count(node_cpu_seconds_total) WITHOUT (mode)) BY (instance )) > 16000'
+    for: 45s
+    labels:
+      description: Context switching is growing on node (> 16000 / s)
+      weight: 0.3
+      severity: critical
+      severity_code: 90
+
+  - alert: High CPU Context switching
+    expr: '(sum(rate(node_context_switches_total[3m])) by (instance ) / count(count(node_cpu_seconds_total) WITHOUT (mode)) BY (instance )) > 13000'
+    for: 45s
+    labels:
+      description: Context switching is growing on node (> 13000 / s)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Uptime
+    expr: 'time() - node_boot_time_seconds < 300'
+    for: 45s
+    labels:
+      description: Node was rebooted < 300 seconds ago
+      weight: 0.1
+      severity: critical
+      severity_code: 90
+
+  - alert: Uptime
+    expr: 'time() - node_boot_time_seconds < 600'
+    for: 45s
+    labels:
+      description: Node was rebooted < 600 seconds ago
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Out of memory
+    expr: '(node_memory_MemAvailable_bytes / 1024 / 1024 ) < 300'
+    for: 45s
+    labels:
+      description: Node memory is filling up < 300MB left
+      weight: 0.4
+      severity: critical
+      severity_code: 90
+
+  - alert: Out of memory
+    expr: '(node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes )  * 100  < 5'
+    for: 45s
+    labels:
+      description: Node memory is filling up (< 5% left)
+      weight: 0.4
+      severity: critical
+      severity_code: 90
+
+  - alert: Out of memory
+    expr: '(node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes )  * 100  < 15'
+    for: 45s
+    labels:
+      description: Node memory is filling up (< 15% left)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Unusual disk write latency
+    expr: 'rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m]) > 200'
+    for: 45s
+    labels:
+      description: Disk latency is growing (write operations > 200ms)
+      weight: 0.4
+      severity: critical
+      severity_code: 90
+
+  - alert: Unusual disk write latency
+    expr: 'rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m]) > 150'
+    for: 45s
+    labels:
+      description: Disk latency is growing (write operations > 150ms)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Unusual disk read latency
+    expr: 'rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 200'
+    for: 45s
+    labels:
+      description: Disk latency is growing (read operations > 200ms)
+      weight: 0.4
+      severity: critical
+      severity_code: 90
+
+  - alert: Unusual disk read latency
+    expr: 'rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 150'
+    for: 45s
+    labels:
+      description: Disk latency is growing (read operations > 150ms)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Out of disk space
+    expr: 'node_filesystem_avail_bytes{fstype=~"ext3|ext4|xfs|tmpfs|btrfs|reiserfs"} < 300'
+    for: 45s
+    labels:
+      description: Disk is almost full (< 300MB left)
+      weight: 0.1
+      severity: critical
+      severity_code: 90
+
+  - alert: Out of disk space
+    expr: '(node_filesystem_avail_bytes{fstype=~"ext3|ext4|xfs|tmpfs|btrfs|reiserfs"} / node_filesystem_size_bytes{fstype=~"ext3|ext4|xfs|tmpfs|btrfs|reiserfs"} * 100) < 5'
+    for: 45s
+    labels:
+      description: Disk is almost full (< 5% left)
+      weight: 0.1
+      severity: critical
+      severity_code: 90
+
+  - alert: Out of disk space
+    expr: '(node_filesystem_avail_bytes{fstype=~"ext3|ext4|xfs|tmpfs|btrfs|reiserfs"} / node_filesystem_size_bytes{fstype=~"ext3|ext4|xfs|tmpfs|btrfs|reiserfs"} * 100) < 15'
+    for: 45s
+    labels:
+      description: Disk is almost full (< 15% left)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Filesystem nodes is out
+    expr: '(node_filesystem_files_free / node_filesystem_files )  * 100  < 5'
+    for: 45s
+    labels:
+      description: Filesystem nodes is out (< 5% left)
+      weight: 0.1
+      severity: critical
+      severity_code: 90
+
+  - alert: Filesystem nodes is out
+    expr: '(node_filesystem_files_free / node_filesystem_files )  * 100  < 15'
+    for: 45s
+    labels:
+      description: Filesystem nodes is out (< 15% left)
+      weight: 0
+      severity: warning
+      severity_code: 40
+
+  - alert: Out of swap
+    expr: '(((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / node_memory_SwapTotal_bytes) * 100) > 85'
+    for: 45s
+    labels:
+      description: Swap usage above 85%
+      severity: warning
+      severity_code: 40
+
+  - alert: Out of swap
+    expr: '(((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / node_memory_SwapTotal_bytes ) * 100)  > 95'
+    for: 45s
+    labels:
+      description: Swap usage above 95%
+      severity: critical
+      severity_code: 90

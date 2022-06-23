@@ -36,3 +36,4 @@ else:
           print()
        else:
           print(Fore.RED + "The container",container.upper(),"is NOT RUNNINg:", is_running(container))
+          print()
