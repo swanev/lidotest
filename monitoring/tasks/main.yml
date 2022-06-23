@@ -3,6 +3,18 @@
 
 #Prapare directories
 
+- name: Check that docker and docker-compose are present
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker
+    - docker-compose
+  tags:
+    - never   
+    - install
+    - docker-daemon
+
 - name: Make grafana data directory writeable
   ansible.builtin.file:
     path: "{{ item }}"
@@ -16,7 +28,7 @@
     - "{{ grafana_docker_conf_dir }}"
     - "{{ grafana_docker_log_dir }}"
     - "{{ grafana_docker_dir }}"
-    - "{{ grafana_docker_dashboards_dir }}"    
+    - "{{ grafana_docker_dashboards_dir }}"
   tags:
     - install
     - prepare_dirs      
@@ -218,7 +230,7 @@
 - name: Copy grafana datasources
   ansible.builtin.template:
     src: datasource.yml.j2
-    dest: "{{ grafana_docker_conf_dir }}/provisioning/datasources/datasource.yml"
+    dest: "{{ grafana_docker_conf_dir }}/datasource.yml"
     owner: 472
     group: 0
     mode: 0644        
@@ -241,24 +253,21 @@
     - Node_Exporter_Full.json     
   tags:
     - install
-    - upgrade      
+    - upgrade
 
-- name: Copy upload scpipt
+- name: Copy grafana dashboard upload script
   ansible.builtin.template:
     src: grafana_dashbords_import.sh.j2
     dest: "{{ grafana_docker_dir }}/grafana_dashbords_import.sh"
+    owner: 472
+    group: 0
+    mode: 0644        
   tags:
     - install
-    - upgrade       
+    - upgrade
 
-- name: Upload dashboards
-  ansible.builtin.shell: /bin/bash {{ grafana_docker_dir }}/grafana_dashbords_import.sh
-  tags:
-    - install
-    - upgrade       
-
-## Stop existing monitoring docker-compose file
-
+- name: Grafana dashboard import
+  shell: "{{grafana_docker_dir}}/grafana_import_dashbords_and_users.sh"        
 - name: Stop monitoring
   ansible.builtin.shell: docker-compose -f "{{ base_path }}/docker-compose.yml" down
   tags:
@@ -273,3 +282,9 @@
     - start
     - install
     - upgrade
+
+- name: Upload dashboards
+  ansible.builtin.shell: /bin/bash {{ grafana_docker_dir }}/grafana_dashbords_import.sh
+  tags:
+    - install
+    - upgrade     
