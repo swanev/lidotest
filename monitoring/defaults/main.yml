@@ -1,7 +1,7 @@
 ---
 # defaults file for monitoring
 
-# base 
+# base
 base_path: "/opt/docker/monitoring"
 base_role_path: "roles/"
 default_monitoring_network: monitoring
@@ -33,7 +33,6 @@ loki_docker_log_opt:
   tags: loki
 
 # defaults for grafana
-
 grafana_container_name: grafana
 grafana_docker_dir: "{{ base_path }}/grafana"
 grafana_docker_net: monitoring
@@ -41,7 +40,6 @@ grafana_docker_user: "grafana"
 grafana_creds: ""
 
 ## grafana sqlite3 database
-
 grafana_docker_log_driver: syslog
 grafana_docker_log_opt:
   syslog-facility: local0

@@ -131,8 +131,8 @@
 
 ## Uninstall loki plugin for docker logs
 
-- name: install loki plugin for docker logs
-  ansible.builtin.shell: docker plugin enable loki
+- name: Disable loki plugin for docker logs
+  ansible.builtin.shell: docker plugin disable loki
   ignore_errors: true
   tags:
     - never
