@@ -83,7 +83,9 @@ Role tags:
 
 **start** - Just run docker-compose up -d. Included in "install" tag.
 
-**remove** - Just run docker-compose down
+**remove** - Just run docker-compose down.
+
+**check** - Check and print "true" or "false" for containers "running" status
 
 Example Playbook:
 ----------------

@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
 
-  prometheus:
+  {{ prometheus_service_name}}:
     image: {{ prometheus_docker_image }}
     container_name: {{ prometheus_container_name }}
     depends_on:
@@ -19,7 +19,7 @@ services:
       options:
         loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"         
 
-  node-exporter:
+  {{ node_exporter_service_name }}:
     image: {{ node_exporter_image }}
     container_name: {{ node_exporter_container_name }}
     depends_on:
@@ -47,7 +47,7 @@ services:
       options:
         loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"
 
-  grafana:
+  {{ grafana_service_name }}:
     image: {{ grafana_docker_image }}
     container_name: {{ grafana_container_name }}
     depends_on:
@@ -73,7 +73,7 @@ services:
       options:
         loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"
 
-  loki:
+  {{ loki_service_name }}:
     image: {{ loki_docker_image }}
     container_name: {{ loki_container_name }}
     restart: always
@@ -89,7 +89,7 @@ services:
     networks:
       - {{ default_monitoring_network }}         
 
-  promtail:
+  {{ promtail_service_name }}:
     image: {{ promtail_docker_image }}
     container_name: {{ promtail_container_name }}
     depends_on:
@@ -110,7 +110,7 @@ services:
       options:
         loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"             
 
-  alertmanager:
+  {{ alertmanager_service_name }}:
     image: {{ alertmanager_image }}
     container_name: {{ alertmanager_container_name }}
     depends_on:
@@ -130,7 +130,7 @@ services:
       options:
         loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"      
 
-  cadvisor:
+  {{ cadvisor_service_name }}:
     image: {{ cadvisor_docker_image }}
     container_name: {{ cadvisor_container_name }}
     depends_on:

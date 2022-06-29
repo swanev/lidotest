@@ -74,4 +74,43 @@
   when: docker_compose_up.changed
   tags:
     - install
-    - upgrade 
+    - upgrade
+
+- name: deploy Docker Compose UP
+  community.docker.docker_compose:
+    project_src: "{{ base_path }}"
+    state: present
+    files:
+    - docker-compose.yml
+  register: docker_compose_up
+  tags:
+    - check    
+
+# - ansible.builtin.debug:
+#     var: docker_compose_up
+#   tags:
+#     - check
+
+- ansible.builtin.debug:
+    msg:
+      - " The container {{ prometheus_container_name }} is UP: {{ docker_compose_up.services.prometheus.prometheus.state.running }}"
+      - " The container {{ node_exporter_service_name }} is UP: {{ docker_compose_up.services.node_exporter.node_exporter.state.running }}"
+      - " The container {{ grafana_service_name }} is UP: {{ docker_compose_up.services.grafana.grafana.state.running }}"
+      - " The container {{ loki_service_name }} is UP: {{ docker_compose_up.services.loki.loki.state.running }}"
+      - " The container {{ promtail_service_name }} is UP: {{ docker_compose_up.services.promtail.promtail.state.running }}"
+      - " The container {{ alertmanager_service_name }} is UP: {{ docker_compose_up.services.alertmanager.alertmanager.state.running }}"
+      - " The container {{ cadvisor_service_name }} is UP: {{ docker_compose_up.services.cadvisor.cadvisor.state.running }}"
+  tags:
+    - check            
+
+- ansible.builtin.assert:
+    that:
+      - "docker_compose_up.services.{{ prometheus_service_name }}.{{ prometheus_container_name }}.state.running"
+      - "docker_compose_up.services.{{ node_exporter_service_name }}.{{ node_exporter_service_name }}.state.running"
+      - "docker_compose_up.services.{{ grafana_service_name }}.{{ grafana_service_name }}.state.running"
+      - "docker_compose_up.services.{{ loki_service_name }}.{{ loki_service_name }}.state.running"
+      - "docker_compose_up.services.{{ promtail_service_name }}.{{ promtail_service_name }}.state.running"
+      - "docker_compose_up.services.{{ alertmanager_service_name }}.{{ alertmanager_service_name }}.state.running"
+      - "docker_compose_up.services.{{ cadvisor_service_name }}.{{ cadvisor_service_name }}.state.running"
+  tags:
+    - check      

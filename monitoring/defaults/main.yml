@@ -14,6 +14,7 @@ docker_daemon_service_dir: /etc/systemd/system/docker.service.d
 
 # defaults for promtail
 promtail_container_name: promtail
+promtail_service_name: promtail
 promtail_docker_dir: "{{ base_path }}/promtail"
 promtail_docker_template_path: ""
 promtail_docker_log_driver: syslog
@@ -24,6 +25,7 @@ promtail_docker_memory_limit: 512MB
 
 # defaults for loki
 loki_container_name: loki
+loki_service_name: loki
 loki_docker_dir: "{{ base_path }}/loki"
 loki_docker_conf_dir: "{{ loki_docker_dir }}/conf"
 loki_docker_data_dir: "{{ loki_docker_dir }}/data"
@@ -35,6 +37,7 @@ loki_docker_log_opt:
 
 # defaults for grafana
 grafana_container_name: grafana
+grafana_service_name: grafana
 grafana_docker_dir: "{{ base_path }}/grafana"
 grafana_docker_net: monitoring
 grafana_docker_user: "grafana"
@@ -48,16 +51,20 @@ grafana_docker_log_opt:
 
 # defaults for node-exporter
 node_exporter_dir: "{{ base_path }}/node-exporter"
-node_exporter_container_name: node-exporter
+node_exporter_container_name: node_exporter
+node_exporter_service_name: node_exporter
 
 # defaults for alertmanager
 alertmanager_container_name:  alertmanager
+alertmanager_service_name: alertmanager
 alertmanager_docker_dir: "{{ base_path }}/alertmanager"
 
 # prometheus
 prometheus_docker_dir: "{{ base_path }}/prometheus"
 prometheus_container_name: prometheus
+prometheus_service_name: prometheus
 prometheus_port: 9090
 
 # cadvisor
 cadvisor_container_name: cadvisor
+cadvisor_service_name: cadvisor
