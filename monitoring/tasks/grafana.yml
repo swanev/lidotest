@@ -1,0 +1,63 @@
+
+## Copy dashboards
+
+- include: docker.yml
+
+- name: Copy grafana dashboards
+  ansible.builtin.copy:
+    src: "{{ file_dir }}/dashboards/{{ item }}"
+    dest: "{{ grafana_docker_dashboards_dir }}"
+    owner: 472
+    group: 0
+    mode: 0644        
+  loop:
+    - Alertmanager.json
+    - Docker_monitoring.json
+    - Node_Exporter_Full.json
+  register: dashboard_updated
+  tags:
+    - install
+    - upgrade 
+
+- name: Import dashboard
+  community.grafana.grafana_dashboard:
+    grafana_url: "http://{{ ansible_default_ipv4.address }}:{{ grafana_port }}"
+    grafana_user: "{{ grafana_admin }}"
+    grafana_password: "{{ grafana_password }}"
+    org_id: 1
+    state: present
+    path: "{{ grafana_docker_dashboards_dir }}/{{ item }}"
+  loop:
+    - Alertmanager.json
+    - Docker_monitoring.json
+    - Node_Exporter_Full.json
+  when: dashboard_updated.changed     
+  tags:
+    - install
+    - upgrade     
+
+- name: create prometheus datasource
+  community.grafana.grafana_datasource:
+    name: Prometheus
+    grafana_url: "http://{{ ansible_default_ipv4.address }}:{{ grafana_port }}"
+    grafana_user: "{{ grafana_admin }}"
+    grafana_password: "{{ grafana_password }}"
+    ds_type: prometheus
+    ds_url: "http://{{ prometheus_container_name }}:{{ prometheus_port }}"
+    tls_skip_verify: false
+  tags:
+    - install
+    - upgrade_datasource     
+
+- name: create Loki datasource
+  community.grafana.grafana_datasource:
+    name: Loki
+    grafana_url: "http://{{ ansible_default_ipv4.address }}:{{ grafana_port }}"
+    grafana_user: "{{ grafana_admin }}"
+    grafana_password: "{{ grafana_password }}"
+    ds_type: loki
+    ds_url: "http://{{ loki_container_name }}:{{ loki_port }}"
+    tls_skip_verify: false
+  tags:
+    - install
+    - upgrade_datasource

@@ -28,6 +28,7 @@ loki_docker_dir: "{{ base_path }}/loki"
 loki_docker_conf_dir: "{{ loki_docker_dir }}/conf"
 loki_docker_data_dir: "{{ loki_docker_dir }}/data"
 loki_docker_log_driver: loki
+loki_port: 3100
 loki_docker_log_opt:
   syslog-facility: local0
   tags: loki
@@ -37,7 +38,7 @@ grafana_container_name: grafana
 grafana_docker_dir: "{{ base_path }}/grafana"
 grafana_docker_net: monitoring
 grafana_docker_user: "grafana"
-grafana_creds: ""
+grafana_port: 3000
 
 ## grafana sqlite3 database
 grafana_docker_log_driver: syslog
@@ -56,6 +57,7 @@ alertmanager_docker_dir: "{{ base_path }}/alertmanager"
 # prometheus
 prometheus_docker_dir: "{{ base_path }}/prometheus"
 prometheus_container_name: prometheus
+prometheus_port: 9090
 
 # cadvisor
 cadvisor_container_name: cadvisor

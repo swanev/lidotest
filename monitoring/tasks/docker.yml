@@ -1,0 +1,76 @@
+# use files parameter to use multiple docker-compose.yml files
+
+- include: prepare_dirs.yml
+
+- name: Install a plugin
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:latest
+    state: enable
+  register: docker_loki_plugin
+  tags:   
+    - install
+    - install-loki-plugin   
+
+- name: Restart docker daemon
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: docker_loki_plugin.changed
+  tags:   
+    - install
+    - install-loki-plugin
+
+- name: Uninstall a plugin
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:latest
+    state: absent
+  register: docker_loki_plugin_remove
+  tags:   
+    - uninstall-loki-plugin
+
+- name: Restart docker daemon
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: docker_loki_plugin_remove.changed
+  tags:   
+    - uninstall-loki-plugin
+
+- name: deploy Docker Compose DOWN
+  community.docker.docker_compose:
+    project_src: "{{ base_path }}"
+    state: absent
+    files:
+    - docker-compose.yml
+  register: docker_compose_down    
+  tags:
+    - remove
+    - upgrade    
+
+- debug:
+    var: docker_compose_down  
+
+- name: deploy Docker Compose UP
+  community.docker.docker_compose:
+    project_src: "{{ base_path }}"
+    state: present
+    files:
+    - docker-compose.yml
+  register: docker_compose_up
+  when: dirs_prepared.stat.exists
+  tags:
+    - install
+    - upgrade
+    - start
+
+- debug:
+    var: docker_compose_up
+   
+- name: Sleep for 15 seconds to give containers time to become ready
+  ansible.builtin.wait_for:
+    timeout: 15
+  tags:
+    - install
+    - upgrade 

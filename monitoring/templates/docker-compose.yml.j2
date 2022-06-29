@@ -17,8 +17,7 @@ services:
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"            
-
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"         
 
   node-exporter:
     image: {{ node_exporter_image }}
@@ -54,14 +53,16 @@ services:
     depends_on:
       - loki    
     restart: always
+    environment:
+        - GF_SECURITY_ADMIN_USER={{ grafana_admin }}
+        - GF_SECURITY_ADMIN_PASSWORD={{ grafana_password }}
     labels:
         - "prometheus-job=grafana"      
     ports:
       - {{ grafana_docker_ports }}
     volumes:
       - {{ grafana_docker_data_dir }}:/var/lib/grafana
-      - {{ grafana_docker_conf_dir }}/grafana.ini:/etc/grafana/grafana.ini
-      - {{ grafana_docker_conf_dir }}/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - {{ grafana_docker_conf_dir }}:/etc/grafana
       - {{ grafana_docker_log_dir }}:/var/log/grafana
       - {{ grafana_docker_dashboards_dir }}:/etc/grafana/provisioning/dashboards
     user: {{ grafana_docker_user }}

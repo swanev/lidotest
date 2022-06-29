@@ -39,6 +39,8 @@ grafana_docker_conf_dir
 grafana_docker_log_dir
 grafana_docker_ports
 grafana_docker_data_dir
+grafana_admin
+grafana_password
 
 # node-exporter
 node_exporter_image
@@ -95,7 +97,7 @@ Including an example of how to use your role (for instance, with variables passe
 
 ***For first time installation run:***
 
-ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags install
+ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags install --extra-vars="grafana_admin=YOUR_USER grafana_password=YOUR_PASSWORD"
 
 ***For down and up containers:***
 
