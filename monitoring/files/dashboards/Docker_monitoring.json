@@ -41,8 +41,8 @@
        {
          "builtIn": 1,
          "datasource": {
-           "type": "grafana",
-           "uid": "-- Grafana --"
+           "type": "prometheus",
+           "uid": "Prometheus"
          },
          "enable": true,
          "hide": true,
@@ -70,7 +70,7 @@
      {
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "fieldConfig": {
          "defaults": {
@@ -133,7 +133,7 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
            "expr": "count(container_last_seen{image!=\"\"})",
            "intervalFactor": 2,
@@ -150,7 +150,7 @@
      {
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "fieldConfig": {
          "defaults": {
@@ -213,7 +213,7 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
            "expr": "sum(container_memory_usage_bytes{image!=\"\"})/1024/1024",
            "intervalFactor": 2,
@@ -230,7 +230,7 @@
      {
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "fieldConfig": {
          "defaults": {
@@ -293,9 +293,9 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
-           "expr": "sum(rate(container_cpu_user_seconds_total{image!=\"\"}[5m]) Alertmanager.json conf curl dashboards dashboards_export.sh data docker_check.py Docker_monitoring.json export grafana_dashbords_import.sh log Node_Exporter_Full.json services_check.py tmp_check.json tmp_dash.json 100)",
+           "expr": "sum(rate(container_cpu_user_seconds_total{image!=\"\"}[5m]) * 100)",
            "intervalFactor": 2,
            "legendFormat": "",
            "metric": "container_memory_usage_bytes",
@@ -314,7 +314,7 @@
        "dashes": false,
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "decimals": 2,
        "editable": true,
@@ -362,9 +362,9 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
-           "expr": "rate(container_cpu_user_seconds_total{image!=\"\"}[5m]) Alertmanager.json conf curl dashboards dashboards_export.sh data docker_check.py Docker_monitoring.json export grafana_dashbords_import.sh log Node_Exporter_Full.json services_check.py tmp_check.json tmp_dash.json 100",
+           "expr": "rate(container_cpu_user_seconds_total{image!=\"\"}[5m]) * 100",
            "intervalFactor": 2,
            "legendFormat": "{{name}}",
            "metric": "cpu",
@@ -410,7 +410,7 @@
        "dashes": false,
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "decimals": 2,
        "editable": true,
@@ -458,7 +458,7 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
            "expr": "container_memory_usage_bytes{image!=\"\"}",
            "hide": false,
@@ -508,7 +508,7 @@
        "dashes": false,
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "editable": true,
        "error": false,
@@ -553,7 +553,7 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
            "expr": "irate(container_network_receive_bytes_total{image!=\"\"}[5m])",
            "intervalFactor": 2,
@@ -601,7 +601,7 @@
        "dashes": false,
        "datasource": {
          "type": "prometheus",
-         "uid": "P1809F7CD0C75ACF3"
+         "uid": "Prometheus"
        },
        "editable": true,
        "error": false,
@@ -646,7 +646,7 @@
          {
            "datasource": {
              "type": "prometheus",
-             "uid": "P1809F7CD0C75ACF3"
+             "uid": "Prometheus"
            },
            "expr": "irate(container_network_transmit_bytes_total{image!=\"\"}[5m])",
            "intervalFactor": 2,

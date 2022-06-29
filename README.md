@@ -5,6 +5,8 @@ Deploy Grafana/Prometheus/AlertManager/Loki/node-exporter/cadvisor/Promtail with
 
 Requirements:
 ------------
+community.docker.(docker_plugin, docker_compose)
+community.grafana.(grafana_dashboard, grafana_datasource)
 
 Linux, Docker/Podman
 
@@ -61,26 +63,19 @@ cadvisor_docker_ports
 
 Dependencies
 ------------
-
+community.docker.(docker_plugin, docker_compose)
+community.grafana.(grafana_dashboard, grafana_datasource)
 
 Role tags:
 --------------
-
-**never** - For tasks which has to be done only once at first time installation procedure and shouldn't been launched by default.
 
 **install** - For first time installation procedure.
 
 **install-loki-plugin** - Run installation of Loki plugin for Docker. Included in "install" and "never" tags. 
 
-**enable-loki-plugin** - Enabled Loki plugin for Docker. Included to "install" and "never" tags. 
-
-**disable-loki-plugin** - Disable Loki plugin for Docker. Included to "never" tags.
-
 **uninstall-loki-plugin** - Uninstall Loki plugin for DOcker. Included to "never" tags.
 
 **docker-daemon** - Run task to reconfigure Docker daemon to grant access for Prometheus.
-
-**service descovery**. Included in "install" and "never" tags. 
 
 **prepare_dirs** - Create dirs for which will be mounted to containers. Included in "install" tag.
 
@@ -99,14 +94,6 @@ Including an example of how to use your role (for instance, with variables passe
 
 ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags install --extra-vars="grafana_admin=YOUR_USER grafana_password=YOUR_PASSWORD"
 
-***For down and up containers:***
+***For upgrade configs/dashboards:***
 
-ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags remove,start
-
-    - name: Deploy monitoring
-      hosts: monitoring
-      become: true
-      become_method: sudo
-      gather_facts: true
-      roles:
-         - monitoring         
+ansible-playbook --user YOUR_USER_NAME --inventory YOUR_INVENTORY_FILE deploy-monitoring.yml --tags upgrade --extra-vars="grafana_admin=YOUR_USER grafana_password=YOUR_PASSWORD"

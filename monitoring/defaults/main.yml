@@ -6,7 +6,7 @@ base_path: "/opt/docker/monitoring"
 base_role_path: "roles/"
 default_monitoring_network: monitoring
 file_dir: monitoring/files
-log_driver: loki
+log_driver: grafana/loki-docker-driver
 
 docker_daemon_ip: 0.0.0.0
 docker_daemon_port: 2375

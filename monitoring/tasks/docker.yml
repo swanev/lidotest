@@ -23,7 +23,7 @@
 
 - name: Uninstall a plugin
   community.docker.docker_plugin:
-    plugin_name: grafana/loki-docker-driver:latest
+    plugin_name: "{{ log_driver }}"
     state: absent
   register: docker_loki_plugin_remove
   tags:   
@@ -68,9 +68,10 @@
 - debug:
     var: docker_compose_up
    
-- name: Sleep for 15 seconds to give containers time to become ready
+- name: Sleep for 20 seconds to give containers time to become ready
   ansible.builtin.wait_for:
-    timeout: 15
+    timeout: 20
+  when: docker_compose_up.changed
   tags:
     - install
     - upgrade 

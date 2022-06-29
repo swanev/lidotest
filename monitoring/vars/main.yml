@@ -4,9 +4,9 @@
 # loki
 loki_docker_image: grafana/loki:2.5.0
 loki_docker_ports: "3100:3100"
-loki_listen_port: "3100"
+loki_port: "3100"
 loki_grpc_port: "9096"
-alertmanager_url: http://{{ alertmanager_container_name }}:{{ alertmanager_listen_port }}
+alertmanager_url: http://{{ alertmanager_container_name }}:{{ alertmanager_port }}
 loki_docker_net: monitoring
 loki_docker_log_dir: /var/log
 loki_docker_directory_volumes:
@@ -19,7 +19,7 @@ loki_docker_volumes: "{{ loki_docker_directory_volumes }}"
 promtail_docker_image: grafana/promtail:2.5.0
 promtail_docker_ports: "9081:9081"
 promtail_docker_net: monitoring
-promtail_listen_port: 9081
+promtail_port: 9081
 promtail_docker_data_dir: "{{ promtail_docker_dir }}/data"
 promtail_docker_conf_dir: "{{ promtail_docker_dir }}/conf"
 promtail_docker_log_dir: "/var/lib/docker/containers"
@@ -51,11 +51,12 @@ grafana_docker_directory_volumes:
 node_exporter_image: prom/node-exporter
 node_exporter_docker_ports: "9100:9100"
 node_exporter_file_dir: "{{ base_role_path }}/files/node-exporter"
+node_exporter_port: 9100
 
 # alertmanager
 alertmanager_image: prom/alertmanager
 alertmanager_docker_ports: "9093:9093"
-alertmanager_listen_port: 9093
+alertmanager_port: 9093
 alertmanager_docker_conf_dir: "{{ alertmanager_docker_dir }}/conf"
 alertmanager_docker_data_dir: "{{ alertmanager_docker_dir }}/data"
 
@@ -67,4 +68,5 @@ prometheus_docker_rules_dir: "{{ prometheus_docker_data_dir }}/rules"
 
 # cadvisor
 cadvisor_docker_image: google/cadvisor:latest
-cadvisor_docker_ports: "9092:8080" 
+cadvisor_docker_ports: "9092:8080"
+cadvisor_port: 8080

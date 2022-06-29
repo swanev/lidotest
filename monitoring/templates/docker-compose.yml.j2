@@ -8,8 +8,8 @@ services:
     depends_on:
       - loki
     restart: always
-    ports:
-      - {{ prometheus_docker_ports }}
+    expose:
+      - {{ prometheus_port }}
     volumes:
       - {{ prometheus_docker_data_dir }}:/etc/prometheus:ro
     networks:
@@ -17,7 +17,7 @@ services:
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"         
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"         
 
   node-exporter:
     image: {{ node_exporter_image }}
@@ -27,8 +27,8 @@ services:
     restart: always
     labels:
         - "prometheus-job=node-exporter"    
-    ports:
-      - {{ node_exporter_docker_ports }}
+    expose:
+      - {{ node_exporter_port }}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -45,7 +45,7 @@ services:
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"
 
   grafana:
     image: {{ grafana_docker_image }}
@@ -71,7 +71,7 @@ services:
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"
 
   loki:
     image: {{ loki_docker_image }}
@@ -97,8 +97,8 @@ services:
     restart: always
     labels:
         - "prometheus-job=promtail"        
-    ports:
-      - {{ promtail_docker_ports }}
+    expose:
+      - {{ promtail_port }}
     volumes:
       - {{ promtail_docker_log_dir }}:/var/lib/docker/containers
       - {{ promtail_docker_conf_dir }}:/etc/promtail/
@@ -108,7 +108,7 @@ services:
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"             
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"             
 
   alertmanager:
     image: {{ alertmanager_image }}
@@ -121,14 +121,14 @@ services:
     volumes:
       - {{ alertmanager_docker_conf_dir }}:/etc/alertmanager
       - {{ alertmanager_docker_data_dir }}:/alertmanager
-    ports:
-      - {{ alertmanager_docker_ports }}
+    expose:
+      - {{ alertmanager_port }}
     networks:
       - {{ default_monitoring_network }}
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"      
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"      
 
   cadvisor:
     image: {{ cadvisor_docker_image }}
@@ -144,14 +144,14 @@ services:
       - /var/run:/var/run
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
-    ports:
-      - {{ cadvisor_docker_ports }}
+    expose:
+      - {{ cadvisor_port }}
     networks:
       - {{ default_monitoring_network }}
     logging:
       driver: {{ log_driver }}
       options:
-        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_listen_port }}/loki/api/v1/push"      
+        loki-url: "http://{{ ansible_default_ipv4.address }}:{{ loki_port }}/loki/api/v1/push"      
 
 networks:
   {{ default_monitoring_network }}:
