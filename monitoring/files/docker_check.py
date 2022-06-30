@@ -33,8 +33,8 @@ else:
    my_container_name = "grafana"
    for container in containers:
        if is_running(container) is True:
-          print(Fore.GREEN + "The container",container.upper(),"is RUNNINg:",is_running(container))
+          print(Fore.GREEN + "The container",container.upper(),"is RUNNING:",is_running(container))
           print()
        else:
-          print(Fore.RED + "The container",container.upper(),"is NOT RUNNINg:", is_running(container))
+          print(Fore.RED + "The container",container.upper(),"is NOT RUNNING:", is_running(container))
           print()

@@ -2,3 +2,4 @@
 # tasks file for monitoring
 
 - include: grafana.yml
+- include: check.yml

@@ -26,7 +26,6 @@
     - "{{ grafana_docker_data_dir }}"
     - "{{ grafana_docker_conf_dir }}"
     - "{{ grafana_docker_log_dir }}"
-    # - "{{ grafana_docker_dir }}"
     - "{{ grafana_docker_dashboards_dir }}"
   tags:
     - install
@@ -40,12 +39,7 @@
   loop:
     - "{{ loki_docker_conf_dir }}"
     - "{{ loki_docker_log_dir }}"
-    # - "{{ loki_docker_dir }}"
     - "{{ promtail_docker_conf_dir }}"
-    # - "{{ promtail_docker_dir }}"
-    # - "{{ node_exporter_dir }}"
-    # - "{{ node_exporter_file_dir }}"
-    # - "{{ alertmanager_docker_dir }}"
     - "{{ alertmanager_docker_conf_dir }}"
     - "{{ alertmanager_docker_data_dir }}"
     - "{{ prometheus_docker_data_dir }}"
@@ -53,37 +47,6 @@
   tags:
     - install
     - prepare_dirs
-
-# Prepare docker daemon dir
-
-- name: Prepare docker daemon dir
-  ansible.builtin.file:
-    path: "{{ docker_daemon_service_dir }}"
-    state: directory
-    mode: 0755   
-  tags:
-    - install
-    - docker-daemon
-
-- name: Copy docker daemon options
-  ansible.builtin.template:
-    src: options.conf.j2
-    dest: "{{ docker_daemon_service_dir }}/options.conf"
-    mode: 0644
-  register: docker_daemon_conf   
-  tags: 
-    - install
-    - docker-daemon
-
-- name: Restart docker daemon
-  ansible.builtin.systemd:
-    name: docker
-    state: restarted
-    daemon_reload: yes
-  when: docker_daemon_conf.changed
-  tags:
-    - install
-    - docker-daemon
 
 # COPY CONFIG FILES
 
