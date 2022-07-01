@@ -3,7 +3,7 @@
     src: "{{ file_dir }}/docker_check.py"
     dest: "{{ base_path }}/docker_check.py"
   tags:
-    - check_py
+    - check
 
 - name: RUN check containers script
   ansible.builtin.command: python3 "{{ base_path }}/docker_check.py"
@@ -11,9 +11,9 @@
   failed_when:
      - check_script.stdout | regex_search('False', multiline=True, ignorecase=True)
   tags:
-    - check_py    
+    - check
 
 - debug:
     msg: "{{ check_script.stdout_lines }}"
   tags:
-    - check_py      
+    - check    
